@@ -12,4 +12,6 @@ const mix = require('laravel-mix');
  */
 
 mix.js('resources/js/app.js', 'public/js')
+    .copy('resources/js/bootstrap.js', 'public/js/bootstrap.js')
+    .copy('node_modules/toastr', 'public/plugins/toastr')
    .sass('resources/sass/app.scss', 'public/css');

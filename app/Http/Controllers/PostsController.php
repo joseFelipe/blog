@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Post;
 use Session;
 use App\Category;
+use App\Tag;
 
 class PostsController extends Controller
 {
@@ -27,12 +28,17 @@ class PostsController extends Controller
     public function create()
     {
         $categories = Category::all();
+        $tags = Tag::all();
 
         if($categories->count() == 0) {
             Session::flash('info', 'Você precisa criar alguma categoria antes de criar um post.');
             return redirect()->back();
+        } else if ($tags->count() == 0) {
+            Session::flash('info', 'Você precisa criar alguma tag antes de criar um post.');
+            return redirect()->back();
+        } else {
+            return view('admin.post.create')->with('categories', $categories)->with('tags', $tags);
         }
-        return view('admin.post.create')->with('categories', $categories);
     }
 
     /**
@@ -48,7 +54,8 @@ class PostsController extends Controller
             'title' => 'required|max:255',
             'featured' => 'required|image',
             'content' => 'required',
-            'category_id' => 'required'
+            'category_id' => 'required',
+            'tags' => 'required'
         ]);
 
         $featured = $request->featured;
@@ -64,6 +71,8 @@ class PostsController extends Controller
             'category_id' => $request->category_id,
             'slug' => str_slug($request->title)
         ]);
+
+        $post->tags()->attach($request->tags);
 
         Session::flash('success', 'Post criado com sucesso.');
 
@@ -90,7 +99,9 @@ class PostsController extends Controller
     public function edit($id)
     {
         $post = Post::find($id);
-        return view('admin.post.edit')->with('post', $post)->with('categories', Category::all());
+        return view('admin.post.edit')->with('post', $post)
+                                      ->with('categories', Category::all())
+                                      ->with('tags', Tag::all());
     }
 
     /**
@@ -124,6 +135,8 @@ class PostsController extends Controller
         $post->category_id = $request->category_id;
 
         $post->save();
+
+        $post->tags()->sync($request->tags);
 
         Session::flash('success', 'Post atualizado com sucesso.');
         return redirect()->route('posts');

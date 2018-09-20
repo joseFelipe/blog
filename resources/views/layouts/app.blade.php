@@ -18,7 +18,9 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/toastr.min.css') }}">
+    @yield('styles')
 </head>
 <body>
     <div id="app">
@@ -48,6 +50,17 @@
                                 <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                             </li>
                         @else
+                        <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Dropdown
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <a class="dropdown-item" href="#">Action</a>
+                                  <a class="dropdown-item" href="#">Another action</a>
+                                  <div class="dropdown-divider"></div>
+                                  <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                              </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
@@ -55,8 +68,7 @@
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -90,6 +102,23 @@
                                     <a href="{{ route('categories') }}">Categorias</a>
                                 </li>
                                 <li class="list-group-item">
+                                    <a href="{{ route('tags') }}">Tags</a>
+                                </li>
+                                @if(Auth::user()->admin)
+                                    <li class="list-group-item">
+                                        <a href="{{ route('users') }}">Usuários</a>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a href="{{ route('users.create') }}">Novo Usuário</a>
+                                    </li>
+                                @endif
+                                <li class="list-group-item">
+                                    <a href="{{ route('user.profile') }}">Meu perfil</a>
+                                </li>
+                                <li class="list-group-item">
+                                    <a href="{{ route('tag.create') }}">Criar nova tag</a>
+                                </li>
+                                <li class="list-group-item">
                                     <a href="{{ route('category.create') }}">Criar nova categoria</a>
                                 </li>
                                 <li class="list-group-item">
@@ -104,9 +133,11 @@
                 </div>
             </div>
         </main>
+
     </div>
-    <script src="/js/app.js"></script>
-    <script src="{{ asset('js/toastr.min.js') }}"></script>
+
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('plugins/toastr/toastr.js') }}"></script>
 
     <script>
         @if(Session::has('success'))
@@ -116,5 +147,7 @@
             toastr.info("{{ Session::get('info') }}")
         @endif
     </script>
+
+    @yield('scripts')
 </body>
 </html>
